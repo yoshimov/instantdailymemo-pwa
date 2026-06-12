@@ -6,6 +6,7 @@ const EVENT_TITLE = "memo";
 const DEFAULT_GOOGLE_CLIENT_ID = "594603053819-gqvnat86ev69o7ivlhuqn3vpp47n7hqh.apps.googleusercontent.com";
 const GOOGLE_CLIENT_ID_KEY = "instant_daily_memo_google_client_id";
 const GOOGLE_CALENDAR_ID_KEY = "instant_daily_memo_google_calendar_id";
+const GOOGLE_AUTO_CONNECT_KEY = "instant_daily_memo_google_auto_connect";
 const GOOGLE_CONNECTED_KEY = "instant_daily_memo_google_connected";
 const GOOGLE_SCOPE = "https://www.googleapis.com/auth/calendar.events";
 const GOOGLE_DISCOVERY_BASE = "https://www.googleapis.com/calendar/v3";
@@ -234,7 +235,7 @@ function saveGoogleSettings() {
   const nextClientId = clientIdInput.value.trim();
   localStorage.setItem(GOOGLE_CLIENT_ID_KEY, nextClientId);
   localStorage.setItem(GOOGLE_CALENDAR_ID_KEY, calendarIdInput.value.trim() || "primary");
-  if (nextClientId !== previousClientId) localStorage.removeItem(GOOGLE_CONNECTED_KEY);
+  if (nextClientId !== previousClientId) clearGoogleConnection();
   tokenClient = null;
   accessToken = "";
   googleReady = false;
@@ -249,18 +250,16 @@ async function connectGoogle() {
   }
   await prepareGoogle();
   if (!tokenClient) return;
-  tokenClient.callback = async (response) => {
-    if (response.error) {
-      googleStatus.textContent = "接続失敗";
-      return;
-    }
-    accessToken = response.access_token;
-    localStorage.setItem(GOOGLE_CONNECTED_KEY, "1");
+  rememberGoogleConnection();
+  try {
+    await requestGoogleToken("consent");
     googleStatus.textContent = "接続中";
     showToastMessage("Google に接続しました");
     await loadGoogleMemo();
-  };
-  tokenClient.requestAccessToken({ prompt: "consent" });
+  } catch {
+    clearGoogleConnection();
+    googleStatus.textContent = "接続失敗";
+  }
 }
 
 function disconnectGoogle() {
@@ -268,7 +267,7 @@ function disconnectGoogle() {
     window.google.accounts.oauth2.revoke(accessToken);
   }
   accessToken = "";
-  localStorage.removeItem(GOOGLE_CONNECTED_KEY);
+  clearGoogleConnection();
   updateGoogleStatus();
   showToastMessage("Google 接続を解除しました");
 }
@@ -294,7 +293,7 @@ function requestGoogleToken(prompt) {
         return;
       }
       accessToken = response.access_token;
-      localStorage.setItem(GOOGLE_CONNECTED_KEY, "1");
+      rememberGoogleConnection();
       resolve(response);
     };
     tokenClient.requestAccessToken({ prompt });
@@ -421,7 +420,17 @@ function updateGoogleStatus() {
 }
 
 function wasGoogleConnected() {
-  return localStorage.getItem(GOOGLE_CONNECTED_KEY) === "1";
+  return localStorage.getItem(GOOGLE_AUTO_CONNECT_KEY) === "1" || localStorage.getItem(GOOGLE_CONNECTED_KEY) === "1";
+}
+
+function rememberGoogleConnection() {
+  localStorage.setItem(GOOGLE_AUTO_CONNECT_KEY, "1");
+  localStorage.setItem(GOOGLE_CONNECTED_KEY, "1");
+}
+
+function clearGoogleConnection() {
+  localStorage.removeItem(GOOGLE_AUTO_CONNECT_KEY);
+  localStorage.removeItem(GOOGLE_CONNECTED_KEY);
 }
 
 function insertAtCursor(text) {

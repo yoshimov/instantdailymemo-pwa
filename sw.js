@@ -1,4 +1,4 @@
-const CACHE_NAME = "instant-daily-memo-v1";
+const CACHE_NAME = "instant-daily-memo-v2";
 const APP_SHELL = [
   "./",
   "./index.html",

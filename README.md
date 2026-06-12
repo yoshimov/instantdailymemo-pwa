@@ -2,6 +2,10 @@
 
 起動したらすぐ今日の日記を書ける PWA です。Android 版の体験を Web に移植し、今日のメモをブラウザ内に自動保存します。
 
+公開 URL:
+
+https://yoshimov.github.io/instantdailymemo-pwa/
+
 ## 機能
 
 - 今日の日記を即入力
@@ -18,12 +22,24 @@
 1. Google Cloud Console で Google Calendar API を有効化します。
 2. Google Auth Platform の OAuth 同意画面を設定します。
 3. OAuth 2.0 クライアント ID を「ウェブ アプリケーション」で作成します。
-4. Authorized JavaScript origins に、この PWA の配信元を追加します。ローカル確認なら `http://localhost:4173` です。
-5. アプリの設定画面に OAuth クライアント ID を入れて「Google 接続」を押します。
+4. Authorized JavaScript origins に `https://yoshimov.github.io` を追加します。
+5. ローカル確認もする場合は、Authorized JavaScript origins に `http://localhost:4173` も追加します。
+6. アプリの設定画面で「Google 接続」を押します。
 
 既定では `primary` カレンダーに、今日の終日予定 `memo` として保存します。
+OAuth クライアント ID はアプリに埋め込み済みです。
 
-## 起動
+## GitHub Pages
+
+このリポジトリはビルド不要の静的 PWA です。GitHub Pages では次の設定で公開できます。
+
+1. GitHub のリポジトリ設定を開きます。
+2. `Settings` -> `Pages` を開きます。
+3. `Source` を `Deploy from a branch` にします。
+4. `Branch` を `main`、フォルダを `/(root)` にします。
+5. 保存後、`https://yoshimov.github.io/instantdailymemo-pwa/` で開きます。
+
+## ローカル起動
 
 Service Worker を使うため、ローカルサーバー経由で開きます。
 
