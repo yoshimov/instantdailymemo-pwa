@@ -3,6 +3,7 @@ const DB_VERSION = 1;
 const STORE = "entries";
 const AUTOSAVE_MS = 900;
 const EVENT_TITLE = "memo";
+const DEFAULT_GOOGLE_CLIENT_ID = "594603053819-gqvnat86ev69o7ivlhuqn3vpp47n7hqh.apps.googleusercontent.com";
 const GOOGLE_CLIENT_ID_KEY = "instant_daily_memo_google_client_id";
 const GOOGLE_CALENDAR_ID_KEY = "instant_daily_memo_google_calendar_id";
 const GOOGLE_SCOPE = "https://www.googleapis.com/auth/calendar.events";
@@ -48,7 +49,7 @@ async function init() {
   voiceButton.addEventListener("click", startSpeechInput);
   calendarButton.addEventListener("click", openGoogleCalendarDraft);
   settingsButton.addEventListener("click", () => settingsDialog.showModal());
-  clientIdInput.value = localStorage.getItem(GOOGLE_CLIENT_ID_KEY) || "";
+  clientIdInput.value = localStorage.getItem(GOOGLE_CLIENT_ID_KEY) || DEFAULT_GOOGLE_CLIENT_ID;
   calendarIdInput.value = localStorage.getItem(GOOGLE_CALENDAR_ID_KEY) || "primary";
   clientIdInput.addEventListener("change", saveGoogleSettings);
   calendarIdInput.addEventListener("change", saveGoogleSettings);
