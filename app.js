@@ -6,6 +6,7 @@ const EVENT_TITLE = "memo";
 const DEFAULT_GOOGLE_CLIENT_ID = "594603053819-gqvnat86ev69o7ivlhuqn3vpp47n7hqh.apps.googleusercontent.com";
 const GOOGLE_CLIENT_ID_KEY = "instant_daily_memo_google_client_id";
 const GOOGLE_CALENDAR_ID_KEY = "instant_daily_memo_google_calendar_id";
+const GOOGLE_CONNECTED_KEY = "instant_daily_memo_google_connected";
 const GOOGLE_SCOPE = "https://www.googleapis.com/auth/calendar.events";
 const GOOGLE_DISCOVERY_BASE = "https://www.googleapis.com/calendar/v3";
 
@@ -152,6 +153,7 @@ async function saveMemo({ force = false, toast: showToast = false } = {}) {
   setStatus("保存中...");
   const now = new Date().toISOString();
   try {
+    if (showToast && wasGoogleConnected() && !accessToken) await restoreGoogleConnection();
     await putEntry({
       date: currentKey,
       title: EVENT_TITLE,
@@ -221,14 +223,18 @@ async function prepareGoogle() {
     createTokenClient();
     googleReady = true;
     updateGoogleStatus();
+    if (wasGoogleConnected()) await restoreGoogleConnection();
   } catch {
     googleStatus.textContent = "初期化失敗";
   }
 }
 
 function saveGoogleSettings() {
-  localStorage.setItem(GOOGLE_CLIENT_ID_KEY, clientIdInput.value.trim());
+  const previousClientId = localStorage.getItem(GOOGLE_CLIENT_ID_KEY) || DEFAULT_GOOGLE_CLIENT_ID;
+  const nextClientId = clientIdInput.value.trim();
+  localStorage.setItem(GOOGLE_CLIENT_ID_KEY, nextClientId);
   localStorage.setItem(GOOGLE_CALENDAR_ID_KEY, calendarIdInput.value.trim() || "primary");
+  if (nextClientId !== previousClientId) localStorage.removeItem(GOOGLE_CONNECTED_KEY);
   tokenClient = null;
   accessToken = "";
   googleReady = false;
@@ -249,6 +255,7 @@ async function connectGoogle() {
       return;
     }
     accessToken = response.access_token;
+    localStorage.setItem(GOOGLE_CONNECTED_KEY, "1");
     googleStatus.textContent = "接続中";
     showToastMessage("Google に接続しました");
     await loadGoogleMemo();
@@ -261,8 +268,37 @@ function disconnectGoogle() {
     window.google.accounts.oauth2.revoke(accessToken);
   }
   accessToken = "";
+  localStorage.removeItem(GOOGLE_CONNECTED_KEY);
   updateGoogleStatus();
   showToastMessage("Google 接続を解除しました");
+}
+
+async function restoreGoogleConnection() {
+  if (!tokenClient || accessToken) return;
+  googleStatus.textContent = "再接続中...";
+  try {
+    await requestGoogleToken("");
+    googleStatus.textContent = "接続中";
+    await loadGoogleMemo();
+  } catch {
+    accessToken = "";
+    googleStatus.textContent = "再接続が必要";
+  }
+}
+
+function requestGoogleToken(prompt) {
+  return new Promise((resolve, reject) => {
+    tokenClient.callback = (response) => {
+      if (response.error || !response.access_token) {
+        reject(response);
+        return;
+      }
+      accessToken = response.access_token;
+      localStorage.setItem(GOOGLE_CONNECTED_KEY, "1");
+      resolve(response);
+    };
+    tokenClient.requestAccessToken({ prompt });
+  });
 }
 
 function createTokenClient() {
@@ -373,6 +409,8 @@ function calendarId() {
 function updateGoogleStatus() {
   if (accessToken) {
     googleStatus.textContent = "接続中";
+  } else if (wasGoogleConnected()) {
+    googleStatus.textContent = googleReady ? "再接続可能" : "再接続待ち";
   } else if (clientIdInput.value.trim() && googleReady) {
     googleStatus.textContent = "接続可能";
   } else if (clientIdInput.value.trim()) {
@@ -380,6 +418,10 @@ function updateGoogleStatus() {
   } else {
     googleStatus.textContent = "未設定";
   }
+}
+
+function wasGoogleConnected() {
+  return localStorage.getItem(GOOGLE_CONNECTED_KEY) === "1";
 }
 
 function insertAtCursor(text) {
