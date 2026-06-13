@@ -24,7 +24,10 @@ https://yoshimov.github.io/instantdailymemo-pwa/
 3. OAuth 2.0 クライアント ID を「ウェブ アプリケーション」で作成します。
 4. Authorized JavaScript origins に `https://yoshimov.github.io` を追加します。
 5. ローカル確認もする場合は、Authorized JavaScript origins に `http://localhost:4173` も追加します。
-6. アプリの設定画面で「Google 接続」を押します。
+6. OAuth 同意画面の公開文書に、必要に応じて次の URL を設定します。
+   - プライバシーポリシー: `https://yoshimov.github.io/instantdailymemo-pwa/privacy-policy.html`
+   - 利用規約: `https://yoshimov.github.io/instantdailymemo-pwa/terms.html`
+7. アプリの設定画面で「Google 接続」を押します。
 
 既定では `primary` カレンダーに、今日の終日予定 `memo` として保存します。
 OAuth クライアント ID はアプリに埋め込み済みです。

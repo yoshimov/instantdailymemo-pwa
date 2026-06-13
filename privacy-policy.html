@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <title>プライバシーポリシー - Instant Daily Memo</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="legal-page">
+      <h1>プライバシーポリシー</h1>
+      <p class="updated">最終更新日: 2026年6月13日</p>
+
+      <p>
+        Instant Daily Memo は、起動後すぐに今日の日記を書ける PWA です。本ポリシーは、本アプリにおける情報の取り扱いを説明します。
+      </p>
+
+      <h2>取得・保存する情報</h2>
+      <p>本アプリは、次の情報を利用者のブラウザ内に保存します。</p>
+      <ul>
+        <li>利用者が入力した日記本文</li>
+        <li>日記の保存日、更新日時</li>
+        <li>Google Calendar API 接続に必要な設定値</li>
+        <li>Google 接続状態を復元するためのフラグ</li>
+      </ul>
+      <p>
+        これらの情報は、IndexedDB または localStorage に保存されます。本アプリ独自のサーバーへ送信されることはありません。
+      </p>
+
+      <h2>Google Calendar API の利用</h2>
+      <p>
+        利用者が Google 接続を行った場合、本アプリは Google Calendar API を利用し、選択されたカレンダー内の今日の `memo` 予定を読み書きします。
+      </p>
+      <ul>
+        <li>今日の `memo` 予定を検索します。</li>
+        <li>既存の `memo` 予定がある場合、その説明欄を日記本文として読み込みます。</li>
+        <li>保存時に `memo` 予定の説明欄を更新します。</li>
+        <li>今日の `memo` 予定がない場合、新規の終日予定を作成します。</li>
+      </ul>
+      <p>
+        Google の access token はブラウザのメモリ上で扱い、永続保存しません。Google 接続の復元に必要なフラグのみ localStorage に保存します。
+      </p>
+
+      <h2>音声入力</h2>
+      <p>
+        音声入力はブラウザが提供する Web Speech API を利用します。音声認識の処理方法は、利用者のブラウザや OS、提供元の仕様に従います。
+      </p>
+
+      <h2>第三者提供</h2>
+      <p>
+        本アプリは、利用者が Google 接続を行った場合を除き、日記本文を第三者へ送信しません。Google Calendar API の利用時は、利用者の操作に基づき Google Calendar へ日記本文を送信します。
+      </p>
+
+      <h2>Cookie・解析ツール</h2>
+      <p>
+        本アプリは独自の Cookie やアクセス解析ツールを使用しません。ただし、Google 認証画面や Google Calendar API の利用時には、Google のサービスが Cookie 等を利用する場合があります。
+      </p>
+
+      <h2>データの削除</h2>
+      <p>
+        ブラウザに保存された日記データは、ブラウザのサイトデータ削除機能から削除できます。Google Calendar に保存された `memo` 予定は、Google Calendar 上で削除できます。
+      </p>
+
+      <h2>変更</h2>
+      <p>
+        本ポリシーは、必要に応じて変更されることがあります。重要な変更がある場合は、本ページ上で告知します。
+      </p>
+
+      <h2>お問い合わせ</h2>
+      <p>
+        お問い合わせは、GitHub リポジトリの Issue からお願いします。
+      </p>
+
+      <p><a href="./">アプリへ戻る</a></p>
+    </main>
+  </body>
+</html>

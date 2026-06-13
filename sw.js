@@ -1,7 +1,9 @@
-const CACHE_NAME = "instant-daily-memo-v2";
+const CACHE_NAME = "instant-daily-memo-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./privacy-policy.html",
+  "./terms.html",
   "./styles.css",
   "./app.js",
   "./manifest.webmanifest",
